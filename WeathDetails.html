@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Weather App</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#1e3c72,#2a5298);
+    padding:20px;
+}
+
+.container{
+    width:100%;
+    max-width:550px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(12px);
+    border-radius:25px;
+    padding:30px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.3);
+    border:1px solid rgba(255,255,255,0.2);
+}
+
+.title{
+    text-align:center;
+    color:white;
+    font-size:35px;
+    margin-bottom:20px;
+    letter-spacing:1px;
+}
+
+.date-time{
+    text-align:center;
+    color:#f1f1f1;
+    margin-bottom:25px;
+    font-size:16px;
+    font-weight:bold;
+}
+
+form{
+    display:flex;
+    gap:10px;
+    margin-bottom:25px;
+}
+
+input{
+    flex:1;
+    padding:14px;
+    border:none;
+    outline:none;
+    border-radius:15px;
+    background:rgba(255,255,255,0.2);
+    color:white;
+    font-size:16px;
+}
+
+input::placeholder{
+    color:#e0e0e0;
+}
+
+button{
+    padding:14px 22px;
+    border:none;
+    border-radius:15px;
+    background:#00c6ff;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+    font-weight:bold;
+}
+
+button:hover{
+    transform:scale(1.05);
+    background:#0072ff;
+}
+
+#wait{
+    background:#ffe082;
+    color:#333;
+    text-align:center;
+    font-weight:bold;
+}
+
+h3{
+    background:rgba(255,255,255,0.15);
+    color:white;
+    padding:14px;
+    margin-top:12px;
+    border-radius:15px;
+    font-size:16px;
+    transition:0.3s;
+    border:1px solid rgba(255,255,255,0.1);
+}
+
+h3:hover{
+    transform:translateX(5px);
+    background:rgba(255,255,255,0.25);
+}
+
+#icon{
+    display:block;
+    margin:20px auto;
+    width:100px;
+    height:100px;
+    background:white;
+    border-radius:50%;
+    padding:10px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.3);
+}
+
+@media(max-width:600px){
+
+.container{
+    padding:20px;
+}
+
+.title{
+    font-size:28px;
+}
+
+form{
+    flex-direction:column;
+}
+
+button{
+    width:100%;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1 class="title">
+🌦️ Weather Details
+</h1>
+
+<div class="date-time" id="dateTime"></div>
+
+<form>
+
+<input type="text" id="cityInput" placeholder="Enter City Name">
+
+<button type="button" id="btn">
+Search
+</button>
+
+</form>
+
+<h3 id="wait"></h3>
+
+<img id="icon">
+
+<h3 id="city"></h3>
+<h3 id="region"></h3>
+<h3 id="country"></h3>
+<h3 id="lat"></h3>
+<h3 id="lon"></h3>
+
+<h3 id="last_updated"></h3>
+<h3 id="temp_c"></h3>
+<h3 id="temp_f"></h3>
+<h3 id="is_day"></h3>
+
+<h3 id="text"></h3>
+<h3 id="code"></h3>
+
+</div>
+
+<script>
+
+let date = new Date();
+
+let arr = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+let d = `${date.getDate()}-${date.getMonth()+1}-${date.getFullYear()}`;
+
+setInterval(() => {
+    let date=new Date()
+   
+    let time=`${date.toLocaleTimeString()}`
+    
+    let day = arr[date.getDay()];
+    
+    document.getElementById("dateTime").innerText =
+    `${d} | ${day} | ${time}`;
+}, 1000);
+
+let btn = document.getElementById("btn");
+
+let wait = document.getElementById("wait");
+
+btn.addEventListener("click",function(){
+
+let cityName = document.getElementById("cityInput").value;
+
+async function main(){
+
+let f = await fetch(`https://api.weatherapi.com/v1/current.json?key=cea33064a4084db385262221262405&q=${cityName}`);
+
+let data = await f.json();
+
+document.getElementById("city").innerText =
+`🏙️ City : ${data.location.name}`;
+
+document.getElementById("region").innerText =
+`📍 Region : ${data.location.region}`;
+
+document.getElementById("country").innerText =
+`🌎 Country : ${data.location.country}`;
+
+document.getElementById("lat").innerText =
+`📌 Latitude : ${data.location.lat}`;
+
+document.getElementById("lon").innerText =
+`📌 Longitude : ${data.location.lon}`;
+
+document.getElementById("last_updated").innerText =
+`⏰ Last Updated : ${data.current.last_updated}`;
+
+document.getElementById("temp_c").innerText =
+`🌡️ Temperature : ${data.current.temp_c} °C`;
+
+document.getElementById("temp_f").innerText =
+`🌡️ Temperature : ${data.current.temp_f} °F`;
+
+document.getElementById("is_day").innerText =
+`☀️ Day Status : ${data.current.is_day}`;
+
+document.getElementById("text").innerText =
+`🌤️ Weather : ${data.current.condition.text}`;
+
+document.getElementById("icon").setAttribute(
+"src",
+`https:${data.current.condition.icon}`
+);
+
+document.getElementById("code").innerText =
+`🔢 Weather Code : ${data.current.condition.code}`;
+
+}
+
+function callback(a,call){
+
+setTimeout(()=>{
+
+wait.innerText = `⏳ Wait For ${a} Second`;
+
+if(call){
+call();
+}
+
+},1000);
+
+}
+
+callback(1,()=>{
+
+callback(2,()=>{
+
+callback(3,()=>{
+
+callback(4);
+
+});
+
+});
+
+});
+
+setTimeout(()=>{
+
+wait.innerText = "🚀 Start The Process";
+
+main();
+
+},5000);
+
+});
+
+</script>
+
+</body>
+</html>
