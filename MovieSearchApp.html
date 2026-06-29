@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Search App</title>
+
+    <style>
+    *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#0a0a0a;
+    color:#ffffff;
+    min-height:100vh;
+}
+
+h1{
+    text-align:center;
+    padding:25px;
+    color:#b026ff;
+    text-shadow:0 0 15px #8a2be2;
+    letter-spacing:2px;
+}
+
+.search{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-bottom:30px;
+}
+
+input{
+    width:350px;
+    padding:12px 15px;
+    background:#1b1b1b;
+    color:white;
+    border:2px solid #8a2be2;
+    border-radius:10px;
+    outline:none;
+    font-size:18px;
+    transition:.3s;
+}
+
+input:focus{
+    box-shadow:0 0 15px #8a2be2;
+}
+
+button{
+    padding:12px 25px;
+    background:linear-gradient(135deg,#7b2ff7,#b026ff);
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:18px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    transform:scale(1.08);
+    box-shadow:0 0 20px #8a2be2;
+}
+
+#status{
+    text-align:center;
+    font-size:22px;
+    color:#c084fc;
+    margin-bottom:25px;
+    font-weight:bold;
+}
+
+#div{
+    width:95%;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:25px;
+    padding-bottom:40px;
+}
+
+.card{
+    background:#171717;
+    border:2px solid #2d1b46;
+    border-radius:15px;
+    overflow:hidden;
+    transition:.4s;
+    box-shadow:0 0 15px rgba(138,43,226,.25);
+}
+
+.card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 0 25px rgba(176,38,255,.7);
+}
+
+.card img{
+    width:100%;
+    height:360px;
+    object-fit:cover;
+}
+
+.content{
+    padding:18px;
+}
+
+.content h2{
+    color:#d8b4fe;
+    margin-bottom:12px;
+    font-size:24px;
+}
+
+.content p{
+    margin:8px 0;
+    color:#d1d5db;
+    font-size:16px;
+}
+
+.rating{
+    display:inline-block;
+    margin-top:12px;
+    background:linear-gradient(135deg,#8a2be2,#b026ff);
+    color:white;
+    padding:8px 16px;
+    border-radius:25px;
+    font-weight:bold;
+    box-shadow:0 0 10px rgba(176,38,255,.5);
+}
+
+::-webkit-scrollbar{
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:#111;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#8a2be2;
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#b026ff;
+}
+    </style>
+</head>
+
+<body>
+
+    <h1>🎬 Movie Search App</h1>
+
+    <div class="search">
+        <input type="text" id="a" placeholder="Search Movie...">
+        <button id="btn">Search</button>
+    </div>
+
+    <h2 id="status"></h2>
+
+    <div id="div"></div>
+
+    <script>
+
+        let btn = document.getElementById("btn");
+
+        btn.addEventListener("click", function () {
+
+            let iv = document.getElementById("a").value;
+            let div = document.getElementById("div");
+            let status = document.getElementById("status");
+
+            div.innerHTML = "";
+
+            async function main() {
+
+                let res = await fetch(`https://www.omdbapi.com/?apikey=44af7a6&s=${iv}`);
+                let data = await res.json();
+
+                return new Promise((resolve, reject) => {
+
+                    if (data.Response == "True") {
+
+                      setTimeout(() => {
+                        
+                          
+                          div.innerHTML = "";
+                          
+                          for (let e of data.Search) {
+
+                              let rate = (Math.random() * 2 + 8).toFixed(1);
+                              
+                              div.innerHTML += `
+                              
+                              <div class="card">
+                                
+                                <img src="${e.Poster}" alt="Movie">
+                                
+                                <div class="content">
+                                    
+                                    <h2>${e.Title}</h2>
+                                    
+                                    <p><b>Year :</b> ${e.Year}</p>
+                                    
+                                    <p><b>Type :</b> ${e.Type}</p>
+                                    
+                                    <p><b>IMDb ID :</b> ${e.imdbID}</p>
+                                    
+                                    <span class="rating">⭐ ${rate}</span>
+                                    
+                                    </div>
+                                    
+                                    </div>
+                                    
+                                    `;
+                                }
+                                
+                                resolve("Movies Loaded Successfully");
+                                
+                            }, 5000);
+                        
+
+                    }
+
+                    else {
+
+                        reject("Movie Not Found");
+
+                    }
+
+                });
+
+            }
+
+            async function details() {
+
+                try {
+
+                   
+                    let p=document.createElement("p")
+                    function call(a,time)
+                    {
+                        setTimeout(() => {
+                            // p.innerText=a
+                            // document.body.insertAdjacentElement("afterbegin",p)
+                            status.innerText = `Wait for ${a}...`
+                            console.log(a)
+
+                        }, time);
+                    }
+                    call(1,1000,
+                        call(2,2000,
+                            call(3,3000,
+                                call(4,4000)
+                            )
+                        )
+                    )
+
+                    let ans = await main();
+
+                    status.innerText = ans;
+
+                }
+
+                catch (err) {
+
+                    status.innerText = err;
+
+                }
+
+            }
+
+            details();
+
+        });
+
+    </script>
+
+</body>
+
+</html>
